@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { DataService } from './services/data.service';
+import { map, catchError, tap } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Component({
   selector: 'app-root',
-  template: `<h1>{{ title }}</h1>
-  <app-collection></app-collection>`,
+  templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   providers: [DataService]
 })

@@ -4,7 +4,6 @@ import { MatSnackBar } from '@angular/material';
 import { DataService } from '../services/data.service';
 
 @Component({
-  selector: 'app-collection',
   templateUrl: './collection.component.html',
   styleUrls: ['./collection.component.css']
 })
@@ -26,7 +25,13 @@ export class CollectionComponent implements OnInit {
    }
 
   ngOnInit() {
-      this.books = this._dataService.getBooks();
+      this.getBooks();
+  }
+
+  getBooks(): void {
+    this._dataService.getBooks().subscribe(
+        books => this.books = books,
+        error => this.updateMessage(<any>error, 'ERROR'));
   }
 
   updateMessage(message: string, type: string): void {
