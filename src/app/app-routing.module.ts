@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AboutComponent } from './about/about.component';
-import { CollectionComponent } from './collection/collection.component';
+import { BookDetailComponent } from './book-detail/book-detail.component';
+import { BookGuardService } from './guards/book-guard.service'
 
 const routes: Routes = [
 {
@@ -10,7 +11,7 @@ const routes: Routes = [
   },
   {
     path: 'collection',
-    component: CollectionComponent
+    loadChildren: './collection/collection.module#CollectionModule'
   },
   {
     path: '',
