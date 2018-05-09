@@ -10,8 +10,8 @@
   </mat-card>
 </div>
 <div>
-  <mat-list>
-    <mat-list-item *ngFor="let book of books">
+  <mat-list *ngIf="(books$ | async) as bks">
+    <mat-list-item *ngFor="let book of bks">
       <mat-icon mat-list-icon>book</mat-icon>
       <h3 mat-line><strong>{{book.title}}</strong></h3>
       <div>
@@ -26,7 +26,7 @@
         <button mat-button (click)="deleteBook(book)">
           <i class="material-icons"> delete_forever</i> 
          Delete
-      </button>
+        </button>
       </div>
       <p mat-line>
         <span>{{book.author}}</span>

@@ -17,7 +17,6 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule }from '@angular/http';
 import { BookGuardService } from '../guards/book-guard.service';
 
-
 @NgModule({
   imports: [
     CommonModule,

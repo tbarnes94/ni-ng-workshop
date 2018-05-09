@@ -6,6 +6,11 @@ import { BookDetailComponent } from '../book-detail/book-detail.component';
 import { Router } from '@angular/router';
 import { NewBookComponent } from '../new-book/new-book.component';
 
+import { Store } from '@ngrx/store';
+import * as CollectionActions from './collection-actions';
+import * as fromRoot from '../rootReducer';
+import { Observable } from 'rxjs';
+
 
 @Component({
   templateUrl: './collection.component.html',
@@ -19,15 +24,21 @@ export class CollectionComponent implements OnInit {
   openingTime: Date;
   closingTime: Date;
 
+  books$: Observable<IBook[]>
+
   constructor(
     private _snackBar: MatSnackBar,
     private _dataService: DataService,
-    private _dialog: MatDialog, private _router: Router
+    private _dialog: MatDialog, private _router: Router,
+    private store: Store<fromRoot.State>
   ) {
     this.openingTime = new Date();
     this.openingTime.setHours(10, 0);
     this.closingTime = new Date();
     this.closingTime.setHours(15, 0);
+
+    this.books$ = store.select(fromRoot.selectCollectionBooks);
+    this.books$.subscribe(books => this.booksCount = books.length);
    }
 
   ngOnInit() {
@@ -35,12 +46,13 @@ export class CollectionComponent implements OnInit {
   }
 
   getBooks(): void {
-    this._dataService.getBooks().subscribe(
-        books => {
-          this.books = books;
-          this.booksCount = this.books.length;
-        },
-        error => this.updateMessage(<any>error, 'ERROR'));
+    this.store.dispatch(new CollectionActions.RequestBooks());
+    // this._dataService.getBooks().subscribe(
+    //     books => {
+    //       this.books = books;
+    //       this.booksCount = this.books.length;
+    //     },
+    //     error => this.updateMessage(<any>error, 'ERROR'));
   }
 
   addBook(): void {
@@ -49,35 +61,34 @@ export class CollectionComponent implements OnInit {
     dialogRef.afterClosed().subscribe(newBook => {
       if (newBook) {
         newBook.id = this.booksCount + 100;
-        this._dataService.addBook(newBook)
-            .subscribe(() => {},
-                       () => {},
-                       () => this.getBooks());
+        this.store.dispatch(new CollectionActions.AddBook(newBook));
       }
     });
   }
 
   updateBook(book: IBook): void {
-    this._dataService.updateBook(book)
-        .subscribe(() =>{
-          this._snackBar.open(`"${book.title}" has been updated!`, 'DISMISS', {
-            duration: 3000
-          });
-        },
-        error => this.updateMessage(<any>error, 'ERROR'));
+    this.store.dispatch(new CollectionActions.UpdateBook(book));
+    // this._dataService.updateBook(book)
+    //     .subscribe(() =>{
+    //       this._snackBar.open(`"${book.title}" has been updated!`, 'DISMISS', {
+    //         duration: 3000
+    //       });
+    //     },
+    //     error => this.updateMessage(<any>error, 'ERROR'));
   }
 
   deleteBook(book: IBook): void {
-    this._dataService.deleteBook(book.id)
-      .subscribe(() => {
-        this.getBooks();
-        this._snackBar.open(
-          `"${book.title}" has been deleted!`,
-          'DISMISS', {
-          duration: 3000
-        });
-      },
-      error => this.updateMessage(<any>error, 'ERROR'));
+    this.store.dispatch(new CollectionActions.DeleteBook(book.id));
+    // this._dataService.deleteBook(book.id)
+    //   .subscribe(() => {
+    //     this.getBooks();
+    //     this._snackBar.open(
+    //       `"${book.title}" has been deleted!`,
+    //       'DISMISS', {
+    //       duration: 3000
+    //     });
+    //   },
+    //   error => this.updateMessage(<any>error, 'ERROR'));
   }
 
   openDialog(bookId: number): void {

@@ -1,4 +1,4 @@
-<div *ngIf="book">
+<div *ngIf="(book$ | async) as bk">
   <mat-card>
     <mat-card-header>
       <mat-card-title><h4>{{book.title}}</h4></mat-card-title>
@@ -20,7 +20,7 @@
       </div>
       <div>
         <label><strong>Rating: </strong></label>
-        <app-rating [rating]="book.rating" [book]="book" (ratingClicked)="onRatingUpdate($event)"></app-rating>
+        <app-rating [rating]="bk.rating" [book]="bk" (ratingClicked)="onRatingUpdate($event)"></app-rating>
       </div>
     </mat-card-content>
     <mat-card-actions>
